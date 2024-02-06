@@ -2,12 +2,12 @@
 @using System.Security.Claims
 @inherits LayoutComponentBase
 <div class="page">
-    <div class="sidebar">
+    <div class="not-for-print sidebar">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
+        <div class="not-for-print top-row px-4">
             @* <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a> *@
             <AuthorizeView>
                 <Authorized>@GetUserId(context)</Authorized>
@@ -15,7 +15,7 @@
             </AuthorizeView>
         </div>
 
-        <article class="content px-4">
+        <article id="body-container" class="root-for-print content px-4">
             @Body
         </article>
     </main>

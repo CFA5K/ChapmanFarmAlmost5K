@@ -1,0 +1,49 @@
+@attribute [Route(Occasions.DefaultRoute)]
+@inject Supabase.Client Supabase
+
+@if (!_isLoaded)
+{
+    <i>loading...</i>
+}
+else if (_occasions == null)
+{
+    <i>failed to load</i>
+}
+else
+{
+
+    <table border="1" cellspacing="5" cellpadding="5" width="100%">
+        <tr>
+            <th>Name</th>
+            <th>Created Date</th>
+            <th>Scheduled Date</th>
+            <th>Start Time</th>
+        </tr>
+        @foreach (var occ in _occasions!)
+        {
+            <tr>
+                <td><a href=@(OccasionDetails.GetRoute(occ.Id))>@occ.Name</a></td>
+                <td>@occ.CreatedDate</td>
+                <td>@occ.ScheduledDate</td>
+                <td>@occ.StartTime</td>
+            </tr>
+        }
+    </table>
+}
+
+@code
+{
+    public const string DefaultRoute = "/occasions";
+
+    private bool _isLoaded;
+    private List<Occasion>? _occasions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var t = Supabase.Postgrest.Table<Occasion>();
+        var x = await t.Get();
+
+        _occasions = x.Models;
+        _isLoaded = true;
+    }
+}

@@ -1,3 +1,15 @@
+@media print {
+    .not-for-print {
+        display: none !important;
+    }
+    .root-for-print,
+    #body-container {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100%;
+    }
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

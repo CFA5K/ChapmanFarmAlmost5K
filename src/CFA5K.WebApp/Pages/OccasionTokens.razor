@@ -1,0 +1,100 @@
+@attribute [Route(OccasionTokens.DefaultRouteTemplate)]
+@inject Supabase.Client Supabase
+
+@if (!_isLoaded)
+{
+    <i>loading...</i>
+}
+else if (_occasion == null || _placementTokens == null)
+{
+    <i>failed to load</i>
+}
+else
+{
+    <style>
+        @* #print-table td *@
+        .token-cell {
+            height: 2.5in;
+            border: dashed #aaa 1px;
+            padding: 15px;
+            margin: 1px;
+        }
+        .token-cell .qrtoken {
+            width: 1.5in;
+            height: 1.5in;
+            margin: auto;
+            margin-top: 20px;
+        }
+        .token-cell .qrtoken img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <table id="print-table" width="100%">
+        @for (var index = 0; index < _placementTokens.Count; )
+        {
+            <tr>
+                @for (var across = 0; index < _placementTokens.Count && across < AcrossCount; across++, index++)
+                {
+                    var pt = _placementTokens[index];
+                    var text = $"cfa5k:ptok:pos={pt.Position}&tok={pt.Id}&occ={_occasion.Id}";
+                    @*
+                    <td style="height: 2in;" valign="top" align="left">
+                        <i style="font-size: 70%;">@_occasion.Name</i>
+                        <b style="float: right;">Placement: @pt.Position</b>
+                    </td>
+                    *@
+                    <td>
+                        <div class="token-cell">
+                            <i style="font-size: 70%;">@_occasion.Name</i>
+                            <b style="float: right;">Placement: @pt.Position</b>
+                            <div class="qrtoken">
+                                <QRCode Text=@text Width="100" Height="100" />
+                            </div>
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
+}
+
+
+@code
+{
+    public const string DefaultRouteTemplate = "/occasions/{OccasionId:guid}/tokens";
+    public const string DefaultRouteFormat = "/occasions/{0}/tokens";
+
+    [Parameter] public Guid OccasionId { get; set; }
+    [Parameter] public int AcrossCount { get; set; } = 3;
+
+    bool _isLoaded;
+    Occasion? _occasion;
+    List<PlacementToken>? _placementTokens;
+
+    public static string GetRoute(Guid occasionId)
+    {
+        return string.Format(DefaultRouteFormat, occasionId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        _isLoaded = true;
+    }
+
+    async Task LoadData()
+    {
+        _occasion = await Supabase.Postgrest.Table<Occasion>()
+            .Where(x => x.Id == OccasionId)
+            .Single();
+        if (_occasion != null)
+        {
+            var result = await Supabase.Postgrest.Table<PlacementToken>()
+                .Where(x => x.OccasionId == OccasionId)
+                .Order(x => x.Position, Postgrest.Constants.Ordering.Ascending)
+                .Get();
+            _placementTokens = result.Models;
+        }
+    }
+}

@@ -1,0 +1,94 @@
+@attribute [Route(OccasionDetails.DefaultRouteTemplate)]
+@inject Supabase.Client Supabase
+
+@if (!_isLoaded)
+{
+    <i>loading...</i>
+}
+else if (_occasion == null || _placementTokens == null)
+{
+    <i>failed to load</i>
+}
+else
+{
+    <table border="1" cellspacing="5" cellpadding="5" width="100%">
+        <tr>
+            <th><b>Id</b></th>
+            <td>@_occasion.Id</td>
+        </tr>
+        <tr>
+            <th><b>Created Date</b></th>
+            <td>@_occasion.CreatedDate</td>
+        </tr>
+        <tr>
+            <th><b>Name</b></th>
+            <td>@_occasion.Name</td>
+        </tr>
+        <tr>
+            <th><b>Scheduled Date</b></th>
+            <td>@_occasion.ScheduledDate</td>
+        </tr>
+        <tr>
+            <th><b>Start Time</b></th>
+            <td>@_occasion.StartTime</td>
+        </tr>
+    </table>
+    <hr />
+    <a href=@(Pages.OccasionTokens.GetRoute(_occasion.Id))>Print</a>
+    <hr />
+    <table border="1" cellspacing="5" cellpadding="5" width="100%">
+        <tr>
+            <th>Position</th>
+            <th>Created Date</th>
+            <th>Finish Time</th>
+        </tr>
+
+        @foreach (var pt in _placementTokens!)
+        {
+            <tr>
+                <td>@pt.Position</td>
+                <td>@pt.CreatedDate</td>
+                <td>@pt.FinishTime</td>
+            </tr>
+        }
+    </table>
+}
+
+
+@code
+{
+    public const string DefaultRouteTemplate = "/occasions/{OccasionId:guid}";
+    public const string DefaultRouteFormat = "/occasions/{0}";
+
+    [Parameter] public Guid OccasionId { get; set; }
+
+    bool _isLoaded;
+    Occasion? _occasion;
+    List<PlacementToken>? _placementTokens;
+
+    public static string GetRoute(Guid occasionId)
+    {
+        return string.Format(DefaultRouteFormat, occasionId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        _isLoaded = true;
+    }
+
+    async Task LoadData()
+    {
+        _occasion = await Supabase.Postgrest.Table<Occasion>()
+            .Where(x => x.Id == OccasionId)
+            .Single();
+        if (_occasion != null)
+        {
+            var result = await Supabase.Postgrest.Table<PlacementToken>()
+                .Where(x => x.OccasionId == OccasionId)
+                //.Order(x => x.Position, Postgrest.Constants.Ordering.Ascending)
+                .Get();
+            _placementTokens = result.Models;
+        }
+    }
+}
