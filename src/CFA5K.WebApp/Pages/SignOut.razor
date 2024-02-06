@@ -1,0 +1,27 @@
+@attribute [Route(SignOut.DefaultRoute)]
+@inject NavigationManager Nav
+@inject Supabase.Client Supabase
+<PageTitle>Sign Out</PageTitle>
+<h1>Sign Out</h1>
+
+<p>
+    Are you sure you want to sign out?
+</p>
+<button @onclick=@(DoSignOut)>Yes</button>
+<button @onclick=@(GoHome)>Cancel</button>
+
+@code
+{
+    public const string DefaultRoute = "/signout";
+
+    async Task DoSignOut()
+    {
+        await Supabase.Auth.SignOut();
+        GoHome();
+    }
+
+    void GoHome()
+    {
+        Nav.NavigateTo("/");
+    }
+}

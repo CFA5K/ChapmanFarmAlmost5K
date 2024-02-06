@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inherits LayoutComponentBase
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            @* <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a> *@
+            <AuthorizeView>
+                <Authorized>@GetUserId(context)</Authorized>
+                <NotAuthorized>You're NOT Authorized!</NotAuthorized>
+            </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code
+{
+    string GetUserId(AuthenticationState state)
+    {
+        var user = state.User;
+        var userId = user.Identity;
+
+        if (userId == null)
+        {
+            return "???";
+        }
+
+        var email = user.Claims.FirstOrDefault(x => ClaimTypes.Email == x.Type);
+        var name = userId.Name ?? email?.Value;
+        var type = user.Claims.FirstOrDefault(x => ClaimTypes.System == x.Type)?.Value
+            ?? userId.AuthenticationType;
+
+        return $"{name} ({type})";
+    }
+}

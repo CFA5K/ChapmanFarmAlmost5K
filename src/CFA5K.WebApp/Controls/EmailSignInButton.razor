@@ -1,0 +1,49 @@
+@using Supabase.Gotrue
+@inject ILogger<EmailSignInButton> Logger
+@inject NavigationManager Nav
+@inject Supabase.Client Supabase
+
+@if (_result == null || _result.Value == false)
+{
+    <input type="email" @bind=_email placeholder="user@example.com" />
+    <button @onclick="HandleButtonClicked">Sign In with Email</button>
+    @if (_error != null)
+    {
+        <b class="validation-message"><i>@_error</i></b>
+    }
+}
+else
+{
+    <i>Check your email for a link to complete Sign In.</i>
+}
+
+@code {
+    string? _email;
+    bool? _result;
+    string? _error;
+
+    private async Task HandleButtonClicked(MouseEventArgs obj)
+    {
+        try
+        {
+            var redirectTo = Pages.SignInCallback.GetRoute(Nav);
+            _result = await Supabase.Auth.SignIn(_email!,
+                new SignInOptions
+                {
+                    RedirectTo = redirectTo,
+                });
+            Logger.LogInformation("Sign In with email returned: [{_result}]", _result);
+        }
+        catch (Supabase.Gotrue.Exceptions.GotrueException ex)
+        {
+            _error = $"[{ex.Reason}] {ex.Content}";
+            Logger.LogError(ex, "failed to Sign with email due to [{reason}][{content}]",
+                ex.Reason, ex.Content);
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+            Logger.LogError(ex, "failed to Sign In with email");
+        }
+    }
+}

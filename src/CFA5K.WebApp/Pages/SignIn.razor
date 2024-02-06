@@ -1,0 +1,21 @@
+@attribute [Route(SignIn.DefaultRoute)]
+<PageTitle>Sign In</PageTitle>
+<h1>Sign In</h1>
+
+<style>
+    .signin-options {
+        border: solid 1px #ccc;
+        margin: 10px;
+        padding: 10px;
+    }
+</style>
+
+<div>
+    <div class="signin-options"><EmailSignInButton /></div>
+    <div class="signin-options"><GitHubSignInButton /></div>
+</div>
+
+@code
+{
+    public const string DefaultRoute = "/signin";
+}

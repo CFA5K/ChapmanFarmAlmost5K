@@ -1,0 +1,27 @@
+@inject NavigationManager Nav
+@inject Supabase.Client Supabase
+@code
+{
+    /*
+    [access_token] = [eyJhbGciOiJIXzI1NiIsImtpZCI6IldldmlrVjVIeTFVVVBHMWIiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzA3MjMyMDE5LCJpYXQiOjE3MDcyMjg0MTksImlzcyI6Imh0dHBzOi8vY3lweWxydndwa2F3d2hyYWZ4b2guc3VwYWJhc2UuY28vYXV0aC92MSIsInN1YiI6ImY5NGNkOTZkLWVmYmUtNDlmOC05NmM0LTM0ZjBiMzA1OWU3MSIsImVtYWlsIjoiZWJla2tlcjRjc2NAeWFob28uY29tIiwicGhvbmUiOiIiLCJhcHBfbWV0YWRhdGEiOnsicHJvdmlkZXIiOiJlbWFpbCIsInByb3ZpZGVycyI6WyJlbWFpbCIsImdpdGh1YiJdfSwidXNlcl9tZXRhZGF0YSI6e30sInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiYWFsIjoiYWFsMSIsImFtciI6W3sibWV0aG9kIjoib3RwIiwidGltZXN0YW1wIjoxNzA3MjI4NDE5fV0sInNlc3Npb25faWQiOiJhODhiYjhlMS1kMWU1LTQ2MDQtYTY4ZC01YWM2YzBiNTQzNGUifQ.by1P8ygAhgpUFVdNy1f2kTkunVBT69HrBrpU1uP1jAw]
+    [expires_at] = [1707232019]
+    [expires_in] = [3600]
+    [refresh_token] = [n9SKO9MxUXxJPynC_O40gw]
+    [token_type] = [bearer]
+    [type] = [magiclink]
+    */
+
+    [Parameter] public string? RedirectTo { get; set; } = Pages.Home.DefaultRoute;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var session = await Supabase.Auth.GetSessionFromUrl(Nav.ToAbsoluteUri(Nav.Uri), storeSession: true);
+        if (session?.User != null)
+        {
+            if (!string.IsNullOrEmpty(RedirectTo))
+            {
+                Nav.NavigateTo(RedirectTo);
+            }
+        }
+    }
+}

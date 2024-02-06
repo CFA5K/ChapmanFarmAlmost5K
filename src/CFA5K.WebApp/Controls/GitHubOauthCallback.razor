@@ -1,0 +1,26 @@
+@using Blazored.LocalStorage
+@inject NavigationManager Nav
+@inject Supabase.Client Supabase
+@inject ILocalStorageService LocalStorage
+@code
+{
+    public const string VerifierStorageKey = "verifier";
+    public const string OauthCodeParameter = "code";
+
+    [Parameter] public string? RedirectTo { get; set; } = Pages.Home.DefaultRoute;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Nav.TryGetQueryString<string>(OauthCodeParameter, out var code) && !string.IsNullOrEmpty(code))
+        {
+            var verifier = await LocalStorage.GetItemAsync<string>(VerifierStorageKey);
+            var session = await Supabase.Auth.ExchangeCodeForSession(verifier, code);
+            await LocalStorage.RemoveItemAsync(VerifierStorageKey);
+
+            if (!string.IsNullOrEmpty(RedirectTo))
+            {
+                Nav.NavigateTo(RedirectTo);
+            }
+        }
+    }
+}

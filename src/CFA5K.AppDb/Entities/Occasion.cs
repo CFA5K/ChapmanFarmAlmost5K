@@ -1,7 +1,6 @@
 ﻿// Chapman Farm Almost 5K.
 // Copyright (C) Eugene Bekker.
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CFA5K.AppDb.Entities;

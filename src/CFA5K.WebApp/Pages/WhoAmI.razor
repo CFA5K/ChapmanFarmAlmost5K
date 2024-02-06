@@ -1,0 +1,42 @@
+@attribute [Route(WhoAmI.DefaultRoute)]
+@using Microsoft.AspNetCore.Components.Authorization
+<AuthorizeView>
+    <NotAuthorized>You're NOT Authorized!</NotAuthorized>
+    <Authorized>
+        @if (context.User == null)
+        {
+            <b>User cannot be resolved!</b>
+        }
+        else
+        {
+            <b>All Claims:</b>
+            <ul>
+                @foreach (var c in context.User.Claims)
+                {
+                    <li>[<code>@c.Type</code>] = [<code>@c.Value</code>] from [<code>@c.Subject?.Name</code>]</li>
+                }
+            </ul>
+
+            <b>Identities:</b>
+            <ul>
+                @foreach (var id in context.User.Identities)
+                {
+                    <li>[<code>@id.AuthenticationType</code>]:
+                        <ul>
+                            <li>Name: @id.Name</li>
+                            <li>Label: @id.Label</li>
+                            <li>IsAuthenticated: @id.IsAuthenticated</li>
+                            <li>NameClaimType: @id.NameClaimType</li>
+                            <li>RoleClaimType: @id.RoleClaimType</li>
+                            <li>BootstrapContext: @id.BootstrapContext</li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+        }
+    </Authorized>
+</AuthorizeView>
+@code
+{
+    public const string DefaultRoute = "/whoami";
+}

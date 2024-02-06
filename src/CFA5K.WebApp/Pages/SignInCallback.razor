@@ -1,0 +1,82 @@
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Primitives
+@using Supabase.Gotrue
+@attribute [Route(SignInCallback.DefaultRouteTemplate)]
+@inject NavigationManager Nav
+
+@switch (_provider)
+{
+    case Constants.Provider.Github:
+        <GitHubOauthCallback RedirectTo=@_redirectTo />
+        break;
+
+    case null:
+    default:
+        <EmailSignInCallback RedirectTo=@_redirectTo />
+        break;
+}
+
+@if (_uri == null)
+{
+    <i>parsing...</i>
+}
+else
+{
+    <div>
+        Fragment: @_uri.Fragment
+    </div>
+    <div>
+        Fragment Params:
+        <ul>
+            @foreach (var kv in _fragmentParams!)
+            {
+                <li>[<code>@kv.Key</code>] = [<code>@kv.Value</code>]</li>
+            }
+        </ul>
+    </div>
+    <div>
+        Query: @_uri.Query
+    </div>
+    <div>
+        Query Params:
+        <ul>
+            @foreach (var kv in _queryParams!)
+            {
+                <li>[<code>@kv.Key</code>] = [<code>@kv.Value</code>]</li>
+            }
+        </ul>
+    </div>
+}
+
+@code
+{
+    public const string DefaultRouteTemplate = "/signin/callback/{Provider?}";
+    public const string DefaultRouteFormat = "/signin/callback/{0}";
+
+    [Parameter] public string Provider { get; set; } = string.Empty;
+
+    private Constants.Provider? _provider;
+    private string? _redirectTo = null;
+
+    private Uri? _uri;
+    private Dictionary<string, StringValues>? _fragmentParams;
+    private Dictionary<string, StringValues>? _queryParams;
+
+    protected override void OnInitialized()
+    {
+        if (Enum.TryParse<Constants.Provider>(Provider, ignoreCase: true, out var provider))
+        {
+            _provider = provider;
+        }
+
+        _uri = Nav.ToAbsoluteUri(Nav.Uri);
+        _fragmentParams = QueryHelpers.ParseQuery(_uri.Fragment.TrimStart('#'));
+        _queryParams = QueryHelpers.ParseQuery(_uri.Query.TrimStart('?'));
+    }
+
+    public static string GetRoute(NavigationManager nav, Constants.Provider? provider = null)
+    {
+        return nav.ToAbsoluteUri(string.Format(DefaultRouteFormat,
+            provider.ToString() ?? string.Empty)).ToString();
+    }
+}

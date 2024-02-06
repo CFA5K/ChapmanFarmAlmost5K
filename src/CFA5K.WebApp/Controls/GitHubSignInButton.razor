@@ -1,0 +1,36 @@
+﻿@using Supabase.Gotrue
+@using Blazored.LocalStorage
+@inject ILogger<EmailSignInButton> Logger
+@inject NavigationManager Nav
+@inject ILocalStorageService LocalStorage
+@inject Supabase.Client Supabase
+
+<button @onclick="HandleButtonClicked">Sign In with GitHub</button>
+
+@code {
+    private async void HandleButtonClicked(MouseEventArgs obj)
+    {
+        try
+        {
+            var redirectTo = Pages.SignInCallback.GetRoute(Nav, Constants.Provider.Github);
+            var state = await Supabase.Auth.SignIn(Constants.Provider.Github,
+                new SignInOptions
+                    {
+                        FlowType = Constants.OAuthFlowType.PKCE,
+                        RedirectTo = redirectTo,
+                    });
+
+            await LocalStorage.SetItemAsync(GitHubOauthCallback.VerifierStorageKey, state.PKCEVerifier);
+            Nav.NavigateTo(state.Uri.ToString());
+        }
+        catch (Supabase.Gotrue.Exceptions.GotrueException ex)
+        {
+            Logger.LogError(ex, "failed to Sign with GitHub due to [{reason}][{content}]",
+                ex.Reason, ex.Content);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "failed to Sign In with GitHub");
+        }
+    }
+}
