@@ -1,0 +1,9 @@
+@{
+    var ndx = 0;
+}
+@foreach (var t in Texts)
+{
+    var elmId = $"{_idPrefix}_{ndx++}";
+    var qrCodeRef = new QRCodeRef(elmId, AdditionalAttributes);
+    @ChildContent?.Invoke(qrCodeRef)
+}
