@@ -1,0 +1,3 @@
+dotnet new classlib
+dotnet new tool-manifest
+dotnet tool install dotnet-ef
