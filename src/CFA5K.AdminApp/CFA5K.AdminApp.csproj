@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- Pull in the solution-wide default version -->
+  <Import Project="$(MSBuildProjectDirectory)/../../Version.props" />
+
+  <PropertyGroup>
+    <!-- https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#assembly-attribute-properties -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Company>Eugene Bekker</Company>
+    <Copyright>Copyright (C) Eugene Bekker.</Copyright>
+    <Product>Chapman Farm Almost 5K Admin App</Product>
+    <AssemblyTitle>CFA5K.AdminApp</AssemblyTitle>
+    <Configuration>$(Configuration)</Configuration>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CFA5K.AppDb\CFA5K.AppDb.csproj" />
+  </ItemGroup>
+
+</Project>

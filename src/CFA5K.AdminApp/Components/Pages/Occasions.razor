@@ -1,0 +1,39 @@
+@page "/occasions"
+@inject AppDbContext DB
+
+@if (_occasions == null)
+{
+    <i>loading...</i>
+}
+else
+{
+    <table border="1" cellspacing="5" cellpadding="5" width="100%">
+        <tr>
+            <th>Name</th>
+            <th>Created Date</th>
+            <th>Scheduled Date</th>
+            <th>Start Time</th>
+        </tr>
+        @foreach (var occ in _occasions)
+        {
+            <tr>
+                <td><a href=@($"/occasions/{occ.Id}")>@occ.Name</a></td>
+                <td>@occ.CreatedDate</td>
+                <td>@occ.ScheduledDate</td>
+                <td>@occ.StartTime</td>
+            </tr>
+        }
+    </table>
+}
+
+@code
+{
+    List<Occasion>? _occasions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _occasions = await DB.Occasions
+            .OrderBy(x => x.CreatedDate)
+            .ToListAsync();
+    }
+}

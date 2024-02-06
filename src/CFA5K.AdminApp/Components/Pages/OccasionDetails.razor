@@ -1,0 +1,115 @@
+@page "/occasions/{OccasionId:guid}"
+@using System.ComponentModel.DataAnnotations
+@using System.ComponentModel
+@inject AppDbContext DB
+
+@if (!_isLoaded)
+{
+    <i>loading...</i>
+}
+else if (_occasion == null)
+{
+    <b class="validation-message"><i>Invalid Occasion</i></b>
+}
+else
+{
+    <table border="1" cellspacing="5" cellpadding="5" width="100%">
+        <tr>
+            <th><b>Id</b></th>
+            <td>@_occasion.Id</td>
+        </tr>
+        <tr>
+            <th><b>Created Date</b></th>
+            <td>@_occasion.CreatedDate</td>
+        </tr>
+        <tr>
+            <th><b>Name</b></th>
+            <td>@_occasion.Name</td>
+        </tr>
+        <tr>
+            <th><b>Scheduled Date</b></th>
+            <td>@_occasion.ScheduledDate</td>
+        </tr>
+        <tr>
+            <th><b>Start Time</b></th>
+            <td>@_occasion.StartTime</td>
+        </tr>
+    </table>
+    <hr />
+    <EditForm Model=@_input OnValidSubmit=@(OnValidSubmit)>
+        <DataAnnotationsValidator />
+        <ValidationSummary Model=@_input />
+        <InputNumber @bind-Value=@_input.AddPositions DisplayName="Number of Positions to Add" placeholder="num of positions to add" />
+        <ValidationMessage For=@(() => _input.AddPositions) />
+        <button type="submit">Add Positions</button>
+    </EditForm>
+    <hr />
+    <table border="1" cellspacing="5" cellpadding="5" width="100%">
+        <tr>
+            <th>Position</th>
+            <th>Created Date</th>
+            <th>Finish Time</th>
+        </tr>
+
+        @foreach (var pt in _placementTokens!)
+        {
+            <tr>
+                <td>@pt.Position</td>
+                <td>@pt.CreatedDate</td>
+                <td>@pt.FinishTime</td>
+            </tr>
+        }
+    </table>
+}
+
+@code
+{
+    [Parameter] public Guid OccasionId { get; set; }
+
+    bool _isLoaded;
+    Occasion? _occasion;
+    List<PlacementToken>? _placementTokens;
+    InputModel _input = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+        _isLoaded = true;
+    }
+
+    async Task LoadData()
+    {
+        _occasion = await DB.Occasions
+            .SingleOrDefaultAsync(x => x.Id == OccasionId);
+        _placementTokens = await DB.PlacementTokens
+            .Where(x => x.Occasion == _occasion)
+            .OrderBy(x => x.Position)
+            .ToListAsync();
+    }
+
+    async Task OnValidSubmit()
+    {
+        var start = _placementTokens!.Any()
+            ? _placementTokens!.Max(x => x.Position) + 1
+            : 1;
+        foreach (var index in Enumerable.Range(0, _input.AddPositions!.Value))
+        {
+            DB.PlacementTokens.Add(new()
+            {
+                Occasion = _occasion!,
+                Position = start + index,
+            });
+        }
+        await DB.SaveChangesAsync();
+        await LoadData();
+        _input = new();
+    }
+
+    class InputModel
+    {
+        [Required]
+        [Range(1, 100)]
+        [DisplayName("The number of positions to add")]
+        public int? AddPositions { get; set; }
+    }
+}
