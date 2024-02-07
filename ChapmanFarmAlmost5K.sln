@@ -19,7 +19,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		Version.props = Version.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CFA5K.AdminApp", "src\CFA5K.AdminApp\CFA5K.AdminApp.csproj", "{DC1B7B4D-D8D6-4D0C-86C9-DB1BEFD87E7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CFA5K.AdminApp", "src\CFA5K.AdminApp\CFA5K.AdminApp.csproj", "{DC1B7B4D-D8D6-4D0C-86C9-DB1BEFD87E7F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHubWorkflows", "GitHubWorkflows", "{419D70FE-7D29-45D8-B98F-17C1A59F13B4}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\main.yml = .github\workflows\main.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +52,7 @@ Global
 		{C8F4AF8A-FCFD-458E-9E04-564E0515AECC} = {36B8EC15-3AC8-46C5-8B45-28CD6B412142}
 		{FED83E47-9C92-4448-8CF5-8D4118048B60} = {36B8EC15-3AC8-46C5-8B45-28CD6B412142}
 		{DC1B7B4D-D8D6-4D0C-86C9-DB1BEFD87E7F} = {36B8EC15-3AC8-46C5-8B45-28CD6B412142}
+		{419D70FE-7D29-45D8-B98F-17C1A59F13B4} = {85452C8E-092A-4440-A72B-884FC67B43BA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {92E90FE8-DD86-4907-9FE3-24504A7983DD}
