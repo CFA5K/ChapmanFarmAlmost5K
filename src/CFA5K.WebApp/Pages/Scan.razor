@@ -1,0 +1,84 @@
+@attribute [Route(Scan.DefaultRoute)]
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<div>
+    <div class="canvas">
+        <canvas id="canvas" hidden></canvas>
+    </div>
+</div>
+<div>
+    <div class="scanBtn">
+        <a id="btnStart" class="myHref">start scan</a>
+        <a id="btnStop" class="myHref">stop scan</a>
+    </div>
+    <div class="barcode" id="result"></div>
+    <div style="margin: 10px auto;text-align: center" id="time"></div>
+</div>
+
+<div>
+    <button @onclick="StartVideo">Start Scanning</button>
+    <button @onclick="StopVideo">Stop Scanning</button>
+    <button @onclick="Beep">Beep</button>
+</div>
+<div>
+    <textarea rows="10" cols="50" style="width: 100%; resize: both;" @bind=_scans></textarea>
+</div>
+
+@code
+{
+    public const string DefaultRoute = "/scan";
+
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<Scan>? _pageRef;
+    private string _scans = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import",
+                "./Pages/Scan.razor.js");
+            _pageRef = DotNetObjectReference.Create(this);
+
+            //await _module.InvokeVoidAsync("registerCallback", _pageRef, nameof(OnMessage));
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _pageRef?.Dispose();
+        _pageRef = null;
+
+        if (_module != null)
+        {
+            await _module.DisposeAsync();
+            _module = null;
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnMessage(string data, long ms)
+    {
+        Console.WriteLine($"Got Message {data} @ {ms}");
+        _scans = $"Scanned [{data}] @ {ms}ms\r\n" + _scans;
+        StateHasChanged();
+        await Beep();
+    }
+
+    async Task StartVideo()
+    {
+        await _module!.InvokeVoidAsync("startVideo");
+    }
+
+    async Task StopVideo()
+    {
+        await _module!.InvokeVoidAsync("stopVideo");
+        await _module!.InvokeVoidAsync("stopWorker");
+    }
+
+    async Task Beep()
+    {
+        await _module!.InvokeVoidAsync("beep");
+    }
+}
