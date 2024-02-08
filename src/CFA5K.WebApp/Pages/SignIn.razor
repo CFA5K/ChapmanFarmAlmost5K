@@ -1,4 +1,6 @@
+@using Blazored.LocalStorage
 @attribute [Route(SignIn.DefaultRoute)]
+@inject ILocalStorageService LocalStorage
 <PageTitle>Sign In</PageTitle>
 <h1>Sign In</h1>
 
@@ -18,4 +20,18 @@
 @code
 {
     public const string DefaultRoute = "/signin";
+
+    public const string DefaultRedirectTo = Home.DefaultRoute;
+
+    [SupplyParameterFromQuery]
+    public bool DoNotRedirect { get; set; }
+    [SupplyParameterFromQuery]
+    public string? RedirectTo { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await SignInCallback.SetRedirectTo(LocalStorage, DoNotRedirect
+            ? null
+            : RedirectTo ?? DefaultRedirectTo);
+    }
 }

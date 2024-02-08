@@ -1,3 +1,4 @@
+@inject ILogger<EmailSignInCallback> Logger
 @inject NavigationManager Nav
 @inject Supabase.Client Supabase
 @code
@@ -11,13 +12,21 @@
     [type] = [magiclink]
     */
 
+    [Parameter] public EventCallback OnSuccess { get; set; }
     [Parameter] public string? RedirectTo { get; set; } = Pages.Home.DefaultRoute;
 
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("Decoding the Email Callback...");
+
         var session = await Supabase.Auth.GetSessionFromUrl(Nav.ToAbsoluteUri(Nav.Uri), storeSession: true);
         if (session?.User != null)
         {
+            if (OnSuccess.HasDelegate)
+            {
+                await OnSuccess.InvokeAsync();
+            }
+
             if (!string.IsNullOrEmpty(RedirectTo))
             {
                 Nav.NavigateTo(RedirectTo);

@@ -26,11 +26,11 @@ else
     {
         try
         {
-            var redirectTo = Pages.SignInCallback.GetRoute(Nav);
+            var callbackTo = Pages.SignInCallback.GetRoute(Nav);
             _result = await Supabase.Auth.SignIn(_email!,
                 new SignInOptions
                 {
-                    RedirectTo = redirectTo,
+                    RedirectTo = callbackTo,
                 });
             Logger.LogInformation("Sign In with email returned: [{_result}]", _result);
         }
