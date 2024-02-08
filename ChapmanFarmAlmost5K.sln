@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{36B8EC15-3AC8-46C5-8B45-28CD6B412142}"
+	ProjectSection(SolutionItems) = preProject
+		src\global.json = src\global.json
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CFA5K.WebApp", "src\CFA5K.WebApp\CFA5K.WebApp.csproj", "{C8F4AF8A-FCFD-458E-9E04-564E0515AECC}"
 EndProject
