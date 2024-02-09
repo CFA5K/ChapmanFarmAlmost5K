@@ -22,7 +22,14 @@ else
         @foreach (var occ in _occasions!)
         {
             <tr>
-                <td><a href=@(OccasionDetails.GetRoute(occ.Id))>@occ.Name</a></td>
+                <AuthorizeView>
+                    <Authorized>
+                        <td><a href=@(OccasionDetails.GetRoute(occ.Id))>@occ.Name</a></td>
+                    </Authorized>
+                    <NotAuthorized>
+                        <td>@occ.Name</td>
+                    </NotAuthorized>
+                </AuthorizeView>
                 <td>@occ.CreatedDate</td>
                 <td>@occ.ScheduledDate</td>
                 <td>@occ.StartTime</td>

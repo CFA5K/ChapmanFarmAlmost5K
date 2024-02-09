@@ -10,8 +10,23 @@
         <div class="not-for-print top-row px-4">
             @* <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a> *@
             <AuthorizeView>
-                <Authorized>@GetUserId(context)</Authorized>
-                <NotAuthorized>You're NOT Authorized!</NotAuthorized>
+                <Authorized>
+                    <div class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                            @GetUserId(context)
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <li><a class="dropdown-item" href=@(Pages.WhoAmI.DefaultRoute)>Who Am I?</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href=@(Pages.SignOut.DefaultRoute)>Sign Out</a></li>
+                        </ul>
+                    </div>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink class="nav-link" href=@(Pages.SignIn.DefaultRoute)>
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Sign In
+                    </NavLink>
+                </NotAuthorized>
             </AuthorizeView>
         </div>
 

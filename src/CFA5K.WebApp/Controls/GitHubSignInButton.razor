@@ -12,12 +12,12 @@
     {
         try
         {
-            var redirectTo = Pages.SignInCallback.GetRoute(Nav, Constants.Provider.Github);
+            var callbackTo = Pages.SignInCallback.GetRoute(Nav, Constants.Provider.Github);
             var state = await Supabase.Auth.SignIn(Constants.Provider.Github,
                 new SignInOptions
                     {
                         FlowType = Constants.OAuthFlowType.PKCE,
-                        RedirectTo = redirectTo,
+                        RedirectTo = callbackTo,
                     });
 
             await LocalStorage.SetItemAsync(GitHubOauthCallback.VerifierStorageKey, state.PKCEVerifier);

@@ -1,21 +1,30 @@
 @using Blazored.LocalStorage
+@inject ILogger<GitHubOauthCallback> Logger
 @inject NavigationManager Nav
-@inject Supabase.Client Supabase
 @inject ILocalStorageService LocalStorage
+@inject Supabase.Client Supabase
 @code
 {
     public const string VerifierStorageKey = "verifier";
     public const string OauthCodeParameter = "code";
 
+    [Parameter] public EventCallback OnSuccess { get; set; }
     [Parameter] public string? RedirectTo { get; set; } = Pages.Home.DefaultRoute;
 
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogInformation("Decoding the GitHub Callback...");
+
         if (Nav.TryGetQueryString<string>(OauthCodeParameter, out var code) && !string.IsNullOrEmpty(code))
         {
             var verifier = await LocalStorage.GetItemAsync<string>(VerifierStorageKey);
             var session = await Supabase.Auth.ExchangeCodeForSession(verifier, code);
             await LocalStorage.RemoveItemAsync(VerifierStorageKey);
+
+            if (OnSuccess.HasDelegate)
+            {
+                await OnSuccess.InvokeAsync();
+            }
 
             if (!string.IsNullOrEmpty(RedirectTo))
             {
