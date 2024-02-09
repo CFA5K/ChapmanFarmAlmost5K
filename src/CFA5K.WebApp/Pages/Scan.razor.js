@@ -24,12 +24,12 @@ function initWorker() {
 
 const handleMessage = (data, millis) => {
     if (callbackRef && callbackName) {
-        //var now = Date.now();
-        //if (lastMessageTime
-        //    && (now - lastMessageTime < delayBetweenMessages)) {
-        //    return;
-        //}
-        //lastMessageTime = now;
+        var now = Date.now();
+        if (lastMessageTime
+            && (now - lastMessageTime < delayBetweenMessages)) {
+            return;
+        }
+        lastMessageTime = now;
         callbackRef.invokeMethodAsync(callbackName, data, millis);
     }
     else {
@@ -115,8 +115,8 @@ export function startVideo() {
     navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
-            //facingMode: "environment"
-            facingMode: "user"
+            facingMode: "environment"
+            //facingMode: "user"
         }
     })
     .then(stream => {
