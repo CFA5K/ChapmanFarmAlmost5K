@@ -9,7 +9,13 @@ main {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    /* Trademark Blazor Default */
+    /*background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);*/
+    /* Complimentary based on
+     *    https://html-color.org/3A0647
+     *    https://html-color.org/052767 (rgb(5,39,103)
+     */
+    background-image: linear-gradient(180deg, #134706 0%, #008200 70%);
 }
 
 .top-row {
