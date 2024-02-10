@@ -7,6 +7,19 @@
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
 
+  <!-- Pull in the solution-wide default version -->
+  <Import Project="$(MSBuildProjectDirectory)/../../Version.props" />
+
+  <PropertyGroup>
+    <!-- https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props#assembly-attribute-properties -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Company>Eugene Bekker</Company>
+    <Copyright>Copyright (C) Eugene Bekker.</Copyright>
+    <Product>Chapman Farm Almost 5K Web App</Product>
+    <AssemblyTitle>CFA5K.WebApp</AssemblyTitle>
+    <Configuration>$(Configuration)</Configuration>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.1" />
