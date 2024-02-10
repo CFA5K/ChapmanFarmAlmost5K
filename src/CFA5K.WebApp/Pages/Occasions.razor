@@ -48,7 +48,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         var t = Supabase.Postgrest.Table<Occasion>();
-        var x = await t.Get();
+        var x = await t
+            .Order(x => x.ScheduledDate!, Postgrest.Constants.Ordering.Descending)
+            .Order(x => x.Name!, Postgrest.Constants.Ordering.Ascending)
+            .Get();
 
         _occasions = x.Models;
         _isLoaded = true;
