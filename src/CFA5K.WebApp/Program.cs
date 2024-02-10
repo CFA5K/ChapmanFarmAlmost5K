@@ -11,9 +11,16 @@ namespace CFA5K.WebApp;
 
 public class Program
 {
+    public static Build.BuildMeta? BuildMeta { get; set; }
+
     public static async Task Main(string[] args)
     {
+        Program.BuildMeta = Build.BuildMeta.Get<Program>();
+
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+        builder.Services.AddSingleton(Program.BuildMeta);
+
         builder.RootComponents.Add<App>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 

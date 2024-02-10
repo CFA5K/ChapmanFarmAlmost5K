@@ -41,7 +41,7 @@
                 "./Pages/Scan.razor.js");
             _pageRef = DotNetObjectReference.Create(this);
 
-            //await _module.InvokeVoidAsync("registerCallback", _pageRef, nameof(OnMessage));
+            await _module.InvokeVoidAsync("registerCallback", _pageRef, nameof(OnMessage));
         }
     }
 

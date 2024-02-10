@@ -86,7 +86,7 @@ else
         {
             var result = await Supabase.Postgrest.Table<PlacementToken>()
                 .Where(x => x.OccasionId == OccasionId)
-                //.Order(x => x.Position, Postgrest.Constants.Ordering.Ascending)
+                .Order(x => x.Position, Postgrest.Constants.Ordering.Ascending)
                 .Get();
             _placementTokens = result.Models;
         }
